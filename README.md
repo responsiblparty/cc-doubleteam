@@ -37,6 +37,17 @@ Restart Claude Code after install. Type `/doubleteam` to confirm it's working.
 - `/doubleteam` — Claude asks what the task is
 - Claude will also proactively suggest it when a session is heading into a substantial build
 
+## How Phase 2 works
+
+Phase 2 runs Codex by invoking the companion script directly via Bash — **not** through the `codex:rescue` subagent. Subagents inherit the session's original permission mode and will hit a Bash permission wall before they can invoke Codex. The skill uses dynamic path discovery so it works across any Codex plugin version:
+
+```bash
+COMPANION=$(ls ~/.claude/plugins/cache/openai-codex/codex/*/scripts/codex-companion.mjs 2>/dev/null | tail -1)
+node "$COMPANION" task --effort xhigh --write "<plan>"
+```
+
+Phase 2 runs in the background by default — Claude notifies you when Codex finishes and you can keep talking in the meantime.
+
 ## The three phases
 
 | Phase | Model | Effort | Role |
