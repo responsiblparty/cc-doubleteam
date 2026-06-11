@@ -46,17 +46,21 @@ Pause and ask: "Good to proceed to execution, or want to adjust the plan first?"
 
 ### Phase 2 — Execute (Codex xhigh)
 
-Once the user approves the plan, delegate execution to Codex via `codex:rescue`.
+Once the user approves the plan, run Codex directly via Bash using the companion script. **Do not use `codex:rescue`** — spawning it as a subagent causes it to inherit the session's original permissions and hit a Bash permission wall before it can invoke Codex.
 
-Compose the Codex prompt using the `codex:gpt-5-4-prompting` skill structure:
-- `<task>`: the concrete implementation steps from Phase 1, translated into Codex operator language
-- `<default_follow_through_policy>`: implement all steps; if a detail is ambiguous, choose the simplest correct interpretation and note it
-- `<completeness_contract>`: all files in the plan must be touched; do not leave stubs
-- `<action_safety>`: stay strictly within the scope of the plan; no unrelated refactors or cleanup
+Compose a compact single-string prompt from the Phase 1 plan (concrete steps, file paths, clear prose).
 
-Pass `--effort xhigh` to the rescue invocation. Do not set `--model` (Codex uses its current default model).
+Run in background (dynamic path discovery handles any Codex version or home dir):
+```
+Bash(
+  command: COMPANION=$(ls ~/.claude/plugins/cache/openai-codex/codex/*/scripts/codex-companion.mjs 2>/dev/null | tail -1) && node "$COMPANION" task --effort xhigh --write "<prompt>",
+  run_in_background: true
+)
+```
 
-After rescue returns, present the output to the user with a "Phase 2 complete — Codex executed:" header. Note that this burned Codex (ChatGPT) limits, not Claude limits.
+After launching, tell the user: "Codex is running in the background — you'll be notified when it's done. What else is on your mind?" Then continue the conversation normally.
+
+When the background notification arrives, present the output with a "Phase 2 complete — Codex executed:" header. Note that this burned Codex (ChatGPT) limits, not Claude limits. Then proceed to Phase 3.
 
 ---
 
