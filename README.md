@@ -9,8 +9,12 @@ You get Fable-quality planning plus Codex execution without burning your Claude 
 ## Prerequisites
 
 - Claude Code installed
-- Codex CLI: `npm install -g @openai/codex` then `codex login`
-- Codex plugin in Claude Code: `/plugin marketplace add openai/codex-plugin-cc` then install
+- Codex CLI: `npm install -g @openai/codex` then `codex login` (requires paid ChatGPT Plus subscription)
+- Codex plugin in Claude Code:
+  ```
+  /plugin marketplace add openai/codex-plugin-cc
+  /plugin install codex@openai-codex
+  ```
 
 ## Install
 
@@ -19,7 +23,13 @@ git clone https://github.com/responsiblparty/cc-doubleteam
 cp -r cc-doubleteam/skills/doubleteam ~/.claude/skills/doubleteam
 ```
 
-Restart Claude Code after install.
+Optionally copy `CLAUDE.md` contents into your project's `CLAUDE.md` to enable proactive suggestions:
+
+```sh
+cat cc-doubleteam/CLAUDE.md >> /path/to/your/project/CLAUDE.md
+```
+
+Restart Claude Code after install. Type `/doubleteam` to confirm it's working.
 
 ## Usage
 
@@ -31,9 +41,9 @@ Restart Claude Code after install.
 
 | Phase | Model | Effort | Role |
 |---|---|---|---|
-| 1 — Plan | Claude Fable 5 (fallback: Opus) | high | Produces step-by-step implementation plan; pauses for approval |
-| 2 — Execute | Codex 5.5 | xhigh | Implements the plan; burns ChatGPT limits, not Claude limits |
-| 3 — Review | Claude Fable 5 (fallback: Opus) | max | Reviews output against plan; flags issues without rewriting |
+| 1 — Plan | Claude Fable (fallback: Opus) | high | Produces step-by-step implementation plan; pauses for your approval |
+| 2 — Execute | Codex | xhigh | Implements the plan; burns ChatGPT limits, not Claude limits |
+| 3 — Review | Claude Fable (fallback: Opus) | max | Reviews output against plan; flags issues without rewriting |
 
 ## Skipping phases
 
